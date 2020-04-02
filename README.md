@@ -4,7 +4,7 @@ ___
 ## update 1
 - el archivo test.txt contiene el codigo de ejemplo del enunciado
 
-- Se hizo una prueba de concepto para identificar operadores de un solo caracter +%%()[],.:
+- Se hizo una prueba de concepto para identificar operadores de un solo caracter +%()[],.:
 
 - Se implemento la clase Position que guarda el indice, linea y columna del caracter que se lee.
    Esta clase contiene el indice(0-indexado), la fila y la columna(ambos 1-indexado) del caracter actual.  

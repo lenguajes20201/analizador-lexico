@@ -21,46 +21,49 @@ class Position:
     def copy(self):
         return Position(self.index,self.line,self.col)
 
+
 def singlecharop(string,currentPos):
     token =''
     for char in string:
+        print(pos,char)
+        currentPos.advance(char)
         if char == '+':
             token= f'<tk_sum, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == '%': 
             token=f'<tk_mod, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == '(': 
             token=f'<tk_par_izq, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == ')': 
             token=f'<tk_par_der, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == '[': 
             token=f'<tk_llave_izq, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == ']': 
             token=f'<tk_llave_der, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == ',': 
             token=f'<tk_coma, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == '.': 
             token=f'<tk_punto, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
         elif char == ':': 
             token=f'<tk_dospuntos, {currentPos.line}, {currentPos.col}>'
-            currentPos.advance(char)
+            #currentPos.advance(char)
             break
-        else: currentPos.advance(char)
+
     return token
 
 
@@ -69,7 +72,7 @@ def singlecharop(string,currentPos):
 f = open("test.txt","r")
 text = f.read()
 
-pos = Position(0,1,1)
+pos = Position(0,1,0)
 
 while text[pos.index: ]:
     print(singlecharop(text[pos.index: ],pos))

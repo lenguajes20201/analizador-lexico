@@ -21,6 +21,7 @@ class Position:
     def copy(self):
         return Position(self.index,self.line,self.col)
 
+
 class Token:
     def __init__(self, type_, value=None):
         self.type = type_

@@ -24,8 +24,7 @@ class Position:
 
 def singlecharop(string,currentPos):
     token =''
-    for char in string:
-        print(pos,char)
+    for index, char in enumerate(string,start=0):
         currentPos.advance(char)
         if char == '+':
             token= f'<tk_sum, {currentPos.line}, {currentPos.col}>'
@@ -63,7 +62,38 @@ def singlecharop(string,currentPos):
             token=f'<tk_dospuntos, {currentPos.line}, {currentPos.col}>'
             #currentPos.advance(char)
             break
-
+        elif char == '-':
+            if string[index+1] == '>': 
+                token=f'<tk_ejecuta, {pos.line}, {pos.col}>'
+                currentPos.advance(char)
+                break
+            else:
+                token =f'<tk_res, {pos.line}, {pos.col}>'
+                break
+        elif char == '<':
+            if string[index+1] == '=': 
+                token=f'<tk_menorig, {pos.line}, {pos.col}>'
+                currentPos.advance(char)
+                break
+            else:
+                token =f'<tk_menor, {pos.line}, {pos.col}>'
+                break
+        elif char == '>':
+            if string[index+1] == '=': 
+                token=f'<tk_mayorig, {pos.line}, {pos.col}>'
+                currentPos.advance(char)
+                break
+            else:
+                token =f'<tk_menor, {pos.line}, {pos.col}>'
+                break
+        elif char == '=':
+            if string[index+1] == '=': 
+                token=f'<tk_igual, {pos.line}, {pos.col}>'
+                currentPos.advance(char)
+                break
+            else:
+                token =f'<tk_asig, {pos.line}, {pos.col}>'
+                break
     return token
 
 

@@ -30,6 +30,10 @@ def singlecharop(string,currentPos):
             token= f'<tk_sum, {currentPos.line}, {currentPos.col}>'
             #currentPos.advance(char)
             break
+        if char == '*':
+            token= f'<tk_mul, {currentPos.line}, {currentPos.col}>'
+            #currentPos.advance(char)
+            break
         elif char == '%': 
             token=f'<tk_mod, {currentPos.line}, {currentPos.col}>'
             #currentPos.advance(char)
@@ -93,6 +97,11 @@ def singlecharop(string,currentPos):
                 break
             else:
                 token =f'<tk_asig, {pos.line}, {pos.col}>'
+                break
+        elif char == '!':
+            if string[index+1] == '=': 
+                token=f'<tk_diferente, {pos.line}, {pos.col}>'
+                currentPos.advance(char)
                 break
     return token
 

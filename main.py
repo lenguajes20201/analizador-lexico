@@ -1,4 +1,31 @@
-#main program
+symbols=['+','-','*','/','%',
+        '<','>','=','!','(',
+        ')','[',']',',',':',
+        '.']
+
+class Token:
+
+    def __init__(self, type_, position, value=None ):
+        self.type = type_
+        self.value = value
+        self.position = position
+
+    def __str__(self):
+        if self.value:
+            return f'<{self.type}, {self.value}, {self.position.line}, {self.position.col}>'
+        if self.type == 'tk_error':
+            return f'>>> Error lexico(linea:{self.position.line},posicion:{self.position.col})'
+        return f'<{self.type}, {self.position.line}, {self.position.col}>'
+    
+    def __repr__(self):
+        if self.value:
+            return f'<{self.type}, {self.value}, {self.position.line}, {self.position.col}>'
+        if self.type == 'tk_error':
+            return f'>>> Error lexico(linea:{self.position.line},posicion:{self.position.col})'
+        return f'<{self.type}, {self.position.line}, {self.position.col}>'
+
+
+
 class Position:
     def __init__(self, index, line, col):
         self.index = index
@@ -22,98 +49,121 @@ class Position:
         return Position(self.index,self.line,self.col)
 
 
-def singlecharop(string,currentPos):
-    token =''
+def analyzer(string):
+
+    token =None
+
+    comment_mode =False
+
     for index, char in enumerate(string,start=0):
-        currentPos.advance(char)
-        if char == '+':
-            token= f'<tk_sum, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        if char == '*':
-            token= f'<tk_mul, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == '%': 
-            token=f'<tk_mod, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == '(': 
-            token=f'<tk_par_izq, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == ')': 
-            token=f'<tk_par_der, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == '[': 
-            token=f'<tk_llave_izq, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == ']': 
-            token=f'<tk_llave_der, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == ',': 
-            token=f'<tk_coma, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == '.': 
-            token=f'<tk_punto, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == ':': 
-            token=f'<tk_dospuntos, {currentPos.line}, {currentPos.col}>'
-            #currentPos.advance(char)
-            break
-        elif char == '-':
-            if string[index+1] == '>': 
-                token=f'<tk_ejecuta, {pos.line}, {pos.col}>'
-                currentPos.advance(char)
-                break
+        
+        #Se actualiza indice, fila y columna al caracter actual
+        pos.advance(char)
+
+        #Si hay un comentario desactiva todo
+        if char == '#':
+            comment_mode =True
+        #Se vuelve a activar en una nueva linea
+        elif char == '\n':
+            comment_mode =False
+
+        
+        if not comment_mode:
+
+            if char == '+':
+                token= Token('tk_sum', pos.copy())
+                
+            if char == '*':
+                token= Token('tk_mul', pos.copy())
+
+                
+            elif char == '%': 
+                token=Token('tk_mod',pos.copy())
+
+                
+            elif char == '(': 
+                token=Token('tk_par_izq',pos.copy())
+
+                
+            elif char == ')': 
+                token=Token('tk__par_der',pos.copy())
+
+                
+            elif char == '[': 
+                token=Token('tk_llave_izq',pos.copy())
+                
+            elif char == ']': 
+                token=Token('tk_llave_der',pos.copy())
+                
+            elif char == ',': 
+                token=Token('tk_coma',pos.copy())
+                
+            elif char == '.': 
+                token=Token('tk_punto',pos.copy())
+
+                
+            elif char == ':': 
+                token=Token('tk_dospuntos',pos.copy())
+
+                
+            elif char == '-':
+                if string[index+1] == '>': 
+                    token=Token('tk_ejecuta',pos.copy())
+                    pos.advance(char)  
+                else:
+                    token =Token('tk_res',pos.copy())
+                    
+            elif char == '<':
+                if string[index+1] == '=': 
+                    token=Token('tk_menorig',pos.copy())
+                    pos.advance(char)  
+                else:
+                    token =Token('tk_menor',pos.copy())
+                    
+            elif char == '>':
+                if string[index+1] == '=': 
+                    token=Token('tk_mayorig',pos.copy())
+                    pos.advance(char)   
+                else:
+                    token =Token('tk_mayor',pos.copy())
+                    
+            elif char == '=':
+                if string[index+1] == '=': 
+                    token=Token('tk_igual',pos.copy())
+                    pos.advance(char)
+                else:
+                    token =Token('tk_asig',pos.copy())
+
+            elif char == '!':
+                if string[index+1] == '=': 
+                    token=Token('tk_diferente',pos.copy())
+                    pos.advance(char)
+            
+            #En teoria aqui va lo demas :p
             else:
-                token =f'<tk_res, {pos.line}, {pos.col}>'
+                #token =Token('tk_error',pos.copy())
+                pass
+            
+            #Si el token no esta vacio, sale del ciclo y retorna
+            if token != None:
                 break
-        elif char == '<':
-            if string[index+1] == '=': 
-                token=f'<tk_menorig, {pos.line}, {pos.col}>'
-                currentPos.advance(char)
-                break
-            else:
-                token =f'<tk_menor, {pos.line}, {pos.col}>'
-                break
-        elif char == '>':
-            if string[index+1] == '=': 
-                token=f'<tk_mayorig, {pos.line}, {pos.col}>'
-                currentPos.advance(char)
-                break
-            else:
-                token =f'<tk_menor, {pos.line}, {pos.col}>'
-                break
-        elif char == '=':
-            if string[index+1] == '=': 
-                token=f'<tk_igual, {pos.line}, {pos.col}>'
-                currentPos.advance(char)
-                break
-            else:
-                token =f'<tk_asig, {pos.line}, {pos.col}>'
-                break
-        elif char == '!':
-            if string[index+1] == '=': 
-                token=f'<tk_diferente, {pos.line}, {pos.col}>'
-                currentPos.advance(char)
-                break
+       
     return token
 
 
-
-
+#Programa de prueba
 f = open("test.txt","r")
 text = f.read()
 
 pos = Position(0,1,0)
-
+tokens=[]
 while text[pos.index: ]:
-    print(singlecharop(text[pos.index: ],pos))
+    token = analyzer(text[pos.index:])
+    print(token)
+    tokens.append(token)
+
+# Los tokens imprimen acorde a lo que se define en Token.__repr__()
+print(tokens)
+
 
 

@@ -132,12 +132,46 @@ class Lexer:
                 tokens.append(Token('tk_dospuntos',position=self.pos.copy()))
                 self.advance() 
             elif self.current_char == '/':
-                self.advance()
-                #tokens.append(self.make_div())
+                if self.text[self.pos.index+1] == '/':
+                    tokens.append(Token('tk_div',position=self.pos.copy()))
+                    self.advance()
+                    self.advance()
+                else:
+                    tokens.append(IllegalCharError(pos_start=self.pos.copy(),details="Error Simbolo Division"))
             elif self.current_char == '-':
-                self.advance()
-                #tokens.append(self.make_minus())
+                if self.text[self.pos.index+1] == '>':
+                    tokens.append(Token('tk_ejecuta',position=self.pos.copy()))
+                    self.advance()
+                    self.advance()
+                else:
+                    tokens.append(Token('tk_res',position=self.pos.copy()))
+                    self.advance()
+            elif self.current_char == '=':
+                if self.text[self.pos.index+1] == '=':
+                    tokens.append(Token('tk_igual',position=self.pos.copy()))
+                    self.advance()
+                    self.advance()
+                else:
+                    tokens.append(Token('tk_asig',position=self.pos.copy()))
+                    self.advance()
+            elif self.current_char == '>':
+                if self.text[self.pos.index+1] == '=':
+                    tokens.append(Token('tk_mayorig',position=self.pos.copy()))
+                    self.advance()
+                    self.advance()
+                else:
+                    tokens.append(Token('tk_mayor',position=self.pos.copy()))
+                    self.advance()
+            elif self.current_char == '<':
+                if self.text[self.pos.index+1] == '=':
+                    tokens.append(Token('tk_menorig',position=self.pos.copy()))
+                    self.advance()
+                    self.advance()
+                else:
+                    tokens.append(Token('tk_menor',position=self.pos.copy()))
+                    self.advance()
             else:
+                #tokens.append(IllegalCharError(pos_start=self.pos.copy(),details="Error Simbolo Division")) ??????
                 self.advance()
 
         return tokens, None

@@ -63,8 +63,8 @@ class Token:
     
     def __repr__(self):
         if self.value: 
-            return f'<{self.type}, {self.value}, {self.position.line}, {self.position.col}>'
-        return f'<{self.type}, {self.position.line}, {self.position.col}>'
+            return f'\n<{self.type}, {self.value}, {self.position.line}, {self.position.col}>'
+        return f'\n<{self.type}, {self.position.line}, {self.position.col}>'
 
 #ANALIZADOR LEXICO
 class Lexer:
@@ -172,8 +172,19 @@ class Lexer:
                 else:
                     tokens.append(Token('tk_menor',position=self.pos.copy()))
                     self.advance()
+            
+            elif self.current_char == '!':
+                self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    tokens.append(Token('tk_diferente',position=self.pos.copy()))
+                else:
+                    tokens.append(IllegalCharError(self.pos.copy()," '!' caracter invalido"))
+                    self.advance()
+                    break
+            
             else:
-                tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
+                #tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
                 self.advance()
 
         return tokens, None
@@ -201,7 +212,7 @@ class Lexer:
         else:
             return Token('id',start,id_str)
 
-f = open("analizador-lexico/test.txt","r")
+f = open("test.txt","r")
 text = f.read()
 
 lexer = Lexer(text)

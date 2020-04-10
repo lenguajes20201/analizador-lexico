@@ -26,7 +26,7 @@ class Error:
 
 class IllegalCharError(Error):
     def __init__(self, pos, details):
-        super().__init__(pos, 'Error Lexico', details)
+        super().__init__(pos, '\nError Lexico', details)
 
 #POSICION
 class Position:

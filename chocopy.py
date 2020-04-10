@@ -83,7 +83,7 @@ class Lexer:
 
         while self.current_char != None:
 
-            if re.search(r'[ \t]',self.current_char) is not None:
+            if re.search(r'[ \r\n\t]',self.current_char) is not None:
                 self.advance()
             
             elif re.search(r'[0-9]',self.current_char) is not None:
@@ -184,8 +184,8 @@ class Lexer:
                     break
             
             else:
-                #tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
-                self.advance()
+                tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
+                ##self.advance()
 
         return tokens, None
     

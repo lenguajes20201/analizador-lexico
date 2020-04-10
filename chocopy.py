@@ -15,18 +15,18 @@ KEYWORDS = ['__init__','and',
 
 #ERRORES
 class Error:
-    def __init__(self, pos_start, error_name, details):
-        self.pos_start = pos_start
+    def __init__(self, pos, error_name, details):
+        self.pos = pos
         self.error_name = error_name
         self.details = details
 
-    def __str__(self):
-        result = f'{self.error_name}: {self.details}'
+    def __repr__(self):
+        result = f'{self.error_name}: {self.details}, {self.pos.line}, {self.pos.col}'
         return result
 
 class IllegalCharError(Error):
-    def __init__(self, pos_start, details):
-        super().__init__(pos_start, 'Error Lexico')
+    def __init__(self, pos, details):
+        super().__init__(pos, 'Error Lexico', details)
 
 #POSICION
 class Position:
@@ -137,7 +137,9 @@ class Lexer:
                     self.advance()
                     self.advance()
                 else:
-                    tokens.append(IllegalCharError(pos_start=self.pos.copy(),details="Error Simbolo Division"))
+                    tokens.append(IllegalCharError(self.pos.copy()," '/' caracter invalido"))
+                    self.advance()
+                    break
             elif self.current_char == '-':
                 if self.text[self.pos.index+1] == '>':
                     tokens.append(Token('tk_ejecuta',position=self.pos.copy()))
@@ -171,7 +173,7 @@ class Lexer:
                     tokens.append(Token('tk_menor',position=self.pos.copy()))
                     self.advance()
             else:
-                #tokens.append(IllegalCharError(pos_start=self.pos.copy(),details="Error Simbolo Division")) ??????
+                tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
                 self.advance()
 
         return tokens, None
@@ -199,7 +201,7 @@ class Lexer:
         else:
             return Token('id',start,id_str)
 
-f = open("test.txt","r")
+f = open("analizador-lexico/test.txt","r")
 text = f.read()
 
 lexer = Lexer(text)

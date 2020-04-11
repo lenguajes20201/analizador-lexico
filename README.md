@@ -1,10 +1,17 @@
 # analizador-lexico
 analizador lexico para el lenguaje chocopy. taller para la materia lenguajes de programacion 2020-1
 ___
+## update 2
+- El archivo chocopy.py tiene el analizador lexico que analiza adecuadamente los 6 casos de prueba en ./casos_lexer
+
+- El manejo de errores esta precario. Pero es suficiente para lo solicitado para esta entrega.
+
+- El manejo de cadenas tambien esta precario. 
+___
 ## update 1
 - el archivo test.txt contiene el codigo de ejemplo del enunciado
 
-- Se hizo una prueba de concepto para identificar operadores de un solo caracter +\*%()[],.:
+- Se hizo una prueba de concepto para identificar operadores de un solo caracter +\\*%()[],.:
 
 - Se implemento la clase Position que guarda el indice, linea y columna del caracter que se lee.
    Esta clase contiene el indice(0-indexado), la fila y la columna(ambos 1-indexado) del caracter actual.  

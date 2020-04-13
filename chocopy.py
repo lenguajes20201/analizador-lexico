@@ -285,8 +285,7 @@ class Lexer:
         while (self.current_char != None) and (re.search(r'[0-9]',self.current_char) is not None):
             num_str += self.current_char
             self.advance()
-        
-        return Token('tk_entero',start,int(num_str))
+        return Token('tk_entero',start,num_str)
     
     def make_identifier(self):
         id_str = ''
@@ -302,7 +301,7 @@ class Lexer:
             return Token('id',start,id_str)
 
 
-f = open(f"casos_lexer/{5}.txt","r")
+f = open(f"casos_lexer/{3}.txt","r")
 text = f.read()
 lexer = Lexer(text)
 tokens=lexer.make_tokens()

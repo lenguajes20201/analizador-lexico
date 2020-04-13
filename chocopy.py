@@ -85,13 +85,12 @@ class Lexer:
 
     def advance(self):
 
+        #comment_mode flag enable/disable
+        if self.current_char == '#': self.comment_mode = True
+        elif self.current_char == '\n':self.comment_mode = False
+
         self.pos.advance(self.current_char)
         self.current_char = self.text[self.pos.index] if self.pos.index < len(self.text) else None
-
-        if (self.current_char not in ' \n') and (self.indent_mode==True): 
-            self.indent_mode = False
-        elif self.current_char == '\n': 
-            self.indent_mode = True
 
     def make_tokens(self):
         tokens = []
@@ -99,12 +98,10 @@ class Lexer:
         while self.current_char != None:
 
             if self.comment_mode:
-                if self.current_char == '\n':
-                    self.comment_mode = False
                 self.advance()
 
             else:
-                if re.search(r'[\r\t]',self.current_char) is not None:
+                if re.search(r'[\r\t#]',self.current_char) is not None:
                     self.advance()
 
                 elif re.search(r'[0-9]',self.current_char) is not None:

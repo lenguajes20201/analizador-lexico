@@ -1,5 +1,14 @@
+
+
 # analizador-lexico
 analizador lexico para el lenguaje chocopy. taller para la materia lenguajes de programacion 2020-1
+___
+
+# Nombres
+- Marcelo Escamilla Sanchez
+- Nicolas Mateo Casas Ramos
+- Ivan Rene Delgado Gonzalez
+
 ___
 ## update 2
 - El archivo chocopy.py tiene el analizador lexico que analiza adecuadamente los 6 casos de prueba en ./casos_lexer

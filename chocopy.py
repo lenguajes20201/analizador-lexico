@@ -73,71 +73,106 @@ class Lexer:
         self.text = text
         self.pos = Position (-1,1,0)
         self.current_char = None
-        self.advance()
+
         self.comment_mode = False
+        self.token_generated = False
+
+        self.indent_stack = [0]
+        self.indent_count = 0
+        self.indent_mode = True
+
+        self.advance()
 
     def advance(self):
-
-        if self.current_char == '#':self.comment_mode = True
-        elif self.current_char == '\n': self.comment_mode = False
 
         self.pos.advance(self.current_char)
         self.current_char = self.text[self.pos.index] if self.pos.index < len(self.text) else None
 
+        if (self.current_char not in ' \n') and (self.indent_mode==True): 
+            self.indent_mode = False
+        elif self.current_char == '\n': 
+            self.indent_mode = True
+
     def make_tokens(self):
         tokens = []
+
         while self.current_char != None:
 
             if self.comment_mode:
+                if self.current_char == '\n':
+                    self.comment_mode = False
                 self.advance()
+
             else:
-                if re.search(r'[ \n\r\t#]',self.current_char) is not None:
+                if re.search(r'[\r\t]',self.current_char) is not None:
                     self.advance()
+
                 elif re.search(r'[0-9]',self.current_char) is not None:
                     tokens.append(self.make_number())
-            
+                    self.token_generated = True
+
                 elif re.search(r'[a-zA-Z_]',self.current_char) is not None:
                     tokens.append(self.make_identifier())
-                
+                    self.token_generated = True
+
+                elif self.current_char == ' ':
+                    self.advance()
+
+                elif self.current_char == '\n':
+                    if self.token_generated: tokens.append(Token('NEWLINE',self.pos.copy()))
+                    self.advance()
+                    self.token_generated = False
+
                 elif self.current_char == '+':
                     tokens.append(Token('tk_sum',self.pos.copy()))
                     self.advance() 
-                
+                    self.token_generated = True
+
                 elif self.current_char == '*':
                     tokens.append(Token('tk_mul',position=self.pos.copy()))
                     self.advance() 
-                
+                    self.token_generated = True
+
                 elif self.current_char == '(':
                     tokens.append(Token('tk_par_izq',position=self.pos.copy()))
-                    self.advance() 
+                    self.advance()
+                    self.token_generated = True 
                 
                 elif self.current_char == ')':
                     tokens.append(Token('tk_par_der',position=self.pos.copy()))
-                    self.advance() 
+                    self.advance()
+                    self.token_generated = True 
                 
                 elif self.current_char == '[':
                     tokens.append(Token('tk_llave_izq',position=self.pos.copy()))
-                    self.advance() 
+                    self.advance()
+                    self.token_generated = True 
             
                 elif self.current_char == ']':
                     tokens.append(Token('tk_llave_der',position=self.pos.copy()))
                     self.advance() 
+                    self.token_generated = True
                 
                 elif self.current_char == '%':
                     tokens.append(Token('tk_mod',position=self.pos.copy()))
                     self.advance() 
+                    self.token_generated = True
             
                 elif self.current_char == ',':
                     tokens.append(Token('tk_coma',position=self.pos.copy()))
                     self.advance() 
+                    self.token_generated = True
                 
                 elif self.current_char == '.':
                     tokens.append(Token('tk_punto',position=self.pos.copy()))
                     self.advance() 
+                    self.token_generated = True
                 
                 elif self.current_char == ':':
                     tokens.append(Token('tk_dospuntos',position=self.pos.copy()))
                     self.advance() 
+                    self.token_generated = True
+
                 elif self.current_char == '/':
                     if self.text[self.pos.index+1] == '/':
                         tokens.append(Token('tk_div',position=self.pos.copy()))
@@ -147,6 +182,8 @@ class Lexer:
                         tokens.append(IllegalCharError(self.pos.copy()," '/' caracter invalido"))
                         self.advance()
                         break
+                    self.token_generated = True    
+
                 elif self.current_char == '-':
                     if self.text[self.pos.index+1] == '>':
                         tokens.append(Token('tk_ejecuta',position=self.pos.copy()))
@@ -155,6 +192,8 @@ class Lexer:
                     else:
                         tokens.append(Token('tk_res',position=self.pos.copy()))
                         self.advance()
+                    self.token_generated = True
+
                 elif self.current_char == '=':
                     if self.text[self.pos.index+1] == '=':
                         tokens.append(Token('tk_igual',position=self.pos.copy()))
@@ -163,6 +202,8 @@ class Lexer:
                     else:
                         tokens.append(Token('tk_asig',position=self.pos.copy()))
                         self.advance()
+                    self.token_generated = True
+
                 elif self.current_char == '>':
                     if self.text[self.pos.index+1] == '=':
                         tokens.append(Token('tk_mayorig',position=self.pos.copy()))
@@ -171,6 +212,7 @@ class Lexer:
                     else:
                         tokens.append(Token('tk_mayor',position=self.pos.copy()))
                         self.advance()
+                    self.token_generated = True
 
                 elif self.current_char == '<':
                     if self.text[self.pos.index+1] == '=':
@@ -180,7 +222,8 @@ class Lexer:
                     else:
                         tokens.append(Token('tk_menor',position=self.pos.copy()))
                         self.advance()
-                
+                    self.token_generated = True
+
                 elif self.current_char == '!':
                     self.advance()
                     if self.current_char == '=':
@@ -190,10 +233,12 @@ class Lexer:
                         tokens.append(IllegalCharError(self.pos.copy()," '!' caracter invalido"))
                         self.advance()
                         break
+                    self.token_generated = True
 
                 elif self.current_char == '"':
                     tokens.append(self.make_string())
-                
+                    self.token_generated = True
+
                 else:
                     tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
                     self.advance()
@@ -202,7 +247,7 @@ class Lexer:
                 if isinstance(tokens[-1], Error): break
 
         return tokens
-    
+
     def make_string(self):
         string_str = '"'
         start = self.pos.copy()
@@ -255,7 +300,7 @@ class Lexer:
             self.advance()
 
         if id_str in KEYWORDS: 
-            return Token(id_str,position=start)
+            return Token(id_str,start)
         else:
             return Token('id',start,id_str)
 

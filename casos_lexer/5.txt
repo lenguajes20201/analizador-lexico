@@ -1,14 +1,14 @@
-class Animal(object):
-    makes_noise:bool = False
-
+class Animal(object): # stack= [0]
+    makes_noise:bool = False # stack= [0,4]
+          
     def make_noise(self: "Animal") -> object:
-        if (self.makes_noise):
+        if (self.makes_noise): # stack= [0,4,8]
             print(self.sound())
 
-    def sound(self: "Animal") -> str:
-        return "???"
+    def sound(self: "Animal") -> str: 
+        return "???" 
 
-class Cow(Animal):
+class Cow(Animal): # stack= [0]
     def __init__(self: "Cow"):
         self.makes_noise = True
 

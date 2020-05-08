@@ -2,6 +2,15 @@
 import re
 
 # CONSTANTES
+CHARACTERS = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', 
+'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@','A', 'B', 
+'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 
+'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a','b', 'c', 'd', 'e', 'f', 'g', 'h', 
+'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{',
+ '|', '}', '~']
+
+DIGITS= '0123456789'
+
 KEYWORDS = ['__init__','and',
 'as','assert','async','await',
 'bool','break','class','continue',
@@ -13,12 +22,7 @@ KEYWORDS = ['__init__','and',
 'raise','return','self','str','True',
 'try','while','with','yield']
 
-CHARACTERS = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', 
-'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@','A', 'B', 
-'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 
-'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '^', '_', '`', 'a','b', 'c', 'd', 'e', 'f', 'g', 'h', 
-'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{',
- '|', '}', '~']
+
 
 #ERRORES
 class Error:
@@ -78,8 +82,9 @@ class Lexer:
         self.token_generated = False
 
         self.indent_stack = [0]
-        self.indent_count = 0
         self.indent_mode = True
+
+        self.tokens = []
 
         self.advance()
 
@@ -93,131 +98,135 @@ class Lexer:
         self.current_char = self.text[self.pos.index] if self.pos.index < len(self.text) else None
 
     def make_tokens(self):
-        tokens = []
 
         while self.current_char != None:
 
             if self.comment_mode:
                 self.advance()
+                if self.current_char == '\n':
+                    self.make_indent()
 
             else:
-                if re.search(r'[\r\t#]',self.current_char) is not None:
+                if self.current_char in '[\r\t#]':
                     self.advance()
 
-                elif re.search(r'[0-9]',self.current_char) is not None:
-                    tokens.append(self.make_number())
+                elif self.current_char in DIGITS:
+                    self.tokens.append(self.make_number())
                     self.token_generated = True
 
                 elif re.search(r'[a-zA-Z_]',self.current_char) is not None:
-                    tokens.append(self.make_identifier())
+                    self.tokens.append(self.make_identifier())
                     self.token_generated = True
 
                 elif self.current_char == ' ':
                     self.advance()
 
                 elif self.current_char == '\n':
-                    if self.token_generated: tokens.append(Token('NEWLINE',self.pos.copy()))
-                    self.advance()
-                    self.token_generated = False
-
+                    if self.token_generated: 
+                        self.tokens.append(Token('NEWLINE',self.pos.copy()))
+                        self.make_indent()
+                        self.token_generated = False
+                    else:
+                        self.advance()
+                    
                 elif self.current_char == '+':
-                    tokens.append(Token('tk_sum',self.pos.copy()))
+                    self.tokens.append(Token('tk_sum',self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
 
                 elif self.current_char == '*':
-                    tokens.append(Token('tk_mul',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_mul',position=self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
 
                 elif self.current_char == '(':
-                    tokens.append(Token('tk_par_izq',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_par_izq',position=self.pos.copy()))
                     self.advance()
                     self.token_generated = True 
                 
                 elif self.current_char == ')':
-                    tokens.append(Token('tk_par_der',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_par_der',position=self.pos.copy()))
                     self.advance()
                     self.token_generated = True 
                 
                 elif self.current_char == '[':
-                    tokens.append(Token('tk_llave_izq',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_llave_izq',position=self.pos.copy()))
                     self.advance()
                     self.token_generated = True 
             
                 elif self.current_char == ']':
-                    tokens.append(Token('tk_llave_der',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_llave_der',position=self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
                 
                 elif self.current_char == '%':
-                    tokens.append(Token('tk_mod',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_mod',position=self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
             
                 elif self.current_char == ',':
-                    tokens.append(Token('tk_coma',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_coma',position=self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
                 
                 elif self.current_char == '.':
-                    tokens.append(Token('tk_punto',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_punto',position=self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
                 
                 elif self.current_char == ':':
-                    tokens.append(Token('tk_dospuntos',position=self.pos.copy()))
+                    self.tokens.append(Token('tk_dospuntos',position=self.pos.copy()))
                     self.advance() 
                     self.token_generated = True
 
                 elif self.current_char == '/':
                     if self.text[self.pos.index+1] == '/':
-                        tokens.append(Token('tk_div',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_div',position=self.pos.copy()))
                         self.advance()
                         self.advance()
                     else:
-                        tokens.append(IllegalCharError(self.pos.copy()," '/' caracter invalido"))
+                        self.tokens.append(IllegalCharError(self.pos.copy()," '/' caracter invalido"))
                         self.advance()
                         break
                     self.token_generated = True    
 
                 elif self.current_char == '-':
                     if self.text[self.pos.index+1] == '>':
-                        tokens.append(Token('tk_ejecuta',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_ejecuta',position=self.pos.copy()))
                         self.advance()
                         self.advance()
                     else:
-                        tokens.append(Token('tk_res',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_res',position=self.pos.copy()))
                         self.advance()
                     self.token_generated = True
 
                 elif self.current_char == '=':
                     if self.text[self.pos.index+1] == '=':
-                        tokens.append(Token('tk_igual',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_igual',position=self.pos.copy()))
                         self.advance()
                         self.advance()
                     else:
-                        tokens.append(Token('tk_asig',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_asig',position=self.pos.copy()))
                         self.advance()
                     self.token_generated = True
 
                 elif self.current_char == '>':
                     if self.text[self.pos.index+1] == '=':
-                        tokens.append(Token('tk_mayorig',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_mayorig',position=self.pos.copy()))
                         self.advance()
                         self.advance()
                     else:
-                        tokens.append(Token('tk_mayor',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_mayor',position=self.pos.copy()))
                         self.advance()
                     self.token_generated = True
 
                 elif self.current_char == '<':
                     if self.text[self.pos.index+1] == '=':
-                        tokens.append(Token('tk_menorig',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_menorig',position=self.pos.copy()))
                         self.advance()
                         self.advance()
                     else:
-                        tokens.append(Token('tk_menor',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_menor',position=self.pos.copy()))
                         self.advance()
                     self.token_generated = True
 
@@ -225,25 +234,25 @@ class Lexer:
                     self.advance()
                     if self.current_char == '=':
                         self.advance()
-                        tokens.append(Token('tk_diferente',position=self.pos.copy()))
+                        self.tokens.append(Token('tk_diferente',position=self.pos.copy()))
                     else:
-                        tokens.append(IllegalCharError(self.pos.copy()," '!' caracter invalido"))
+                        self.tokens.append(IllegalCharError(self.pos.copy()," '!' caracter invalido"))
                         self.advance()
                         break
                     self.token_generated = True
 
                 elif self.current_char == '"':
-                    tokens.append(self.make_string())
+                    self.tokens.append(self.make_string())
                     self.token_generated = True
 
                 else:
-                    tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
+                    self.tokens.append(IllegalCharError(self.pos.copy(),f"'{self.current_char}'caracter invalido"))
                     self.advance()
 
-            if tokens:
-                if isinstance(tokens[-1], Error): break
-
-        return tokens
+            if self.tokens:
+                if isinstance(self.tokens[-1], Error): break
+        self.make_indent()
+        return self.tokens
 
     def make_string(self):
         string_str = '"'
@@ -299,11 +308,38 @@ class Lexer:
             return Token(id_str,start)
         else:
             return Token('id',start,id_str)
+    def make_indent(self):
+        self.advance()
+        indent_count = 0
+        indent_index =self.pos.index
+        # Start counting whitespaces, reset on newlines
+        while self.current_char is not None and self.current_char in ' \n':
+            if self.current_char == ' ': indent_count += 1
+            elif self.current_char == '\n':
+                indent_index = self.pos.index+1
+                indent_count = 0
+            self.advance()
+        
+        start = Position(indent_index,self.pos.line,1)
+        if self.current_char is None: start = self.pos.copy()
 
+        if indent_count > self.indent_stack[-1]:
+            self.indent_stack.append(indent_count)
+            self.tokens.append(Token('INDENT',start))
+        else:
+            while indent_count < self.indent_stack[-1]:
+                self.indent_stack.pop()
+                self.tokens.append(Token('DEDENT',start))
+        
+        return None
 
-f = open(f"casos_lexer/{3}.txt","r")
+f = open(f"casos_lexer/{0}.txt","r")
 text = f.read()
 lexer = Lexer(text)
 tokens=lexer.make_tokens()
+f.close()
+x = open('output.txt','w')
 for i in tokens:
-    print (i)
+    x.write(str(i))
+    x.write('\n')
+x.close()

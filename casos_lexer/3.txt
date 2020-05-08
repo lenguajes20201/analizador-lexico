@@ -1,6 +1,7 @@
 # Cadenas no especificadas
 -809 3.0.0 -90.9999
 " "
+
 "Cadena & no vac�a con \ s�mbolos $ raros  �  ^ y � � "
 "Send 'kind' "
 "Cadena �� diferente # !?"

@@ -6,14 +6,14 @@ chocopySyntax = {
     },
 
     'nt_inicio_def':{
-        'nt_inicio_def nt_var_def',
-        'nt_inicio_def nt_func_def',
-        'nt_inicio_def nt_class_def',
+        'nt_var_def nt_inicio_def',
+        'nt_func_def nt_inicio_def',
+        'nt_class_def nt_inicio_def',
         'e'
     },
 
     'nt_inicio_stmt':{
-        'nt_inicio_stmt nt_stmt',
+        'nt_stmt nt_inicio_stmt',
         'e'
     },
 
@@ -27,8 +27,8 @@ chocopySyntax = {
 
     'nt_class_body':{
         'kw_pass NEW_LINE',
-        'nt_aux_def nt_var_def',
-        'nt_aux_def nt_func_def'
+        'nt_var_def nt_aux_def',
+        'nt_func_def nt_aux_def'
     },
 
     'nt_aux_def':{
@@ -247,4 +247,5 @@ chocopySyntax = {
 otro : {
     
 }
-print(chocopySyntax)
+#print(chocopySyntax)
+

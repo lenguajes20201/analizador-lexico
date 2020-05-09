@@ -32,8 +32,8 @@ chocopySyntax = {
     },
 
     'nt_aux_def':{
-        'nt_aux_def nt_var_def',
-        'nt_aux_def nt_func_def',
+        'nt_var_def nt_aux_def',
+        'nt_func_def nt_aux_def',
         'e'
     },
 
@@ -49,7 +49,7 @@ chocopySyntax = {
     },
 
     'nt_nvars_aux':{
-        'nt_nvars_aux tk_coma nt_typed_var',
+        'tk_coma nt_typed_var nt_nvars_aux',
         'e'
     },
     
@@ -61,19 +61,19 @@ chocopySyntax = {
     # func_body ::= [global_decl | nonlocal_decl | var_def | func_def ]^* stmt^+
 
     'nt_func_body':{
-        'nt_decl_def_aux nt_nstmt_aux nt_stmt'
+        'nt_decl_def_aux nt_stmt nt_nstmt_aux'
     },
 
     'nt_decl_def_aux':{
-        'nt_decl_def_aux nt_global_decl',
-        'nt_decl_def_aux nt_nonlocal_decl',
-        'nt_decl_def_aux nt_var_def',
-        'nt_decl_def_aux nt_func_def',
+        'nt_global_decl nt_decl_def_aux',
+        'nt_nonlocal_decl nt_decl_def_aux',
+        'nt_var_def nt_decl_def_aux',
+        'nt_func_def nt_decl_def_aux',
         'e',
     },
 
     'nt_nstmt_aux':{
-        'nt_nstmt_aux nt_stmt',
+        'nt_stmt nt_nstmt_aux',
         'e'
     },
 
@@ -83,7 +83,7 @@ chocopySyntax = {
         'tk_id tk_dospuntos nt_type'
     },
 
-    # type ::= ID | IDSTRING | [ type ]
+    # type ::= ID | IDSTRING | '[' type ']'
 
     'nt_type':{
         'tk_id',
@@ -113,14 +113,13 @@ chocopySyntax = {
 
     'nt_stmt':{
         'nt_simple_stmt NEWLINE',
-        'kw_if nt_expr tk_dospuntos nt_block nt_ncond_aux',
-        'nt_fcond_aux',
+        'kw_if nt_expr tk_dospuntos nt_block nt_ncond_aux nt_fcond_aux',
         'kw_while nt_expr tk_dospuntos nt_block',
         'kw_for tk_id kw_in nt_expr tk_dospuntos nt_block'
     },
 
     'nt_ncond_aux':{
-        'nt_ncond_aux kw_elif nt_expr tk_dospuntos nt_block',
+        'kw_elif nt_expr tk_dospuntos nt_block nt_ncond_aux',
         'e'
     },
 
@@ -135,7 +134,7 @@ chocopySyntax = {
         'kw_pass',
         'nt_expr',
         'kw_return nt_expr_aux',
-        'nt_ntargets_aux nt_target tk_asig nt_expr'
+        'nt_target tk_asig nt_ntargets_aux nt_expr'
 
     },
 
@@ -145,14 +144,14 @@ chocopySyntax = {
     },
 
     'nt_ntargets_aux':{
-        'nt_ntargets_aux nt_target tk_asig',
+        'nt_target tk_asig nt_ntargets_aux',
         'e'
     },
 
     # block ::= NEWLINE INDENT stmt+ DEDENT
 
     'nt_block':{
-        'NEWLINE INDENT nt_nstmt_aux nt_stmt DEDENT'
+        'NEWLINE INDENT nt_stmt nt_nstmt_aux DEDENT'
     },
 
     # literal ::= None | True | False | INTEGER | IDSTRING | STRING
@@ -202,7 +201,7 @@ chocopySyntax = {
     },
 
     'nt_cexpr1.1':{
-        'nt_cexpr1.1 tk_coma nt_expr',
+        'tk_coma nt_expr nt_cexpr1.1',
         'e'
     },
 
@@ -229,7 +228,7 @@ chocopySyntax = {
         'nt_cexpr tk_punto tk_id'
     },
 
-    # index_expr ::= cexpr [ expr ]
+    # index_expr ::= cexpr '[' expr ']'
 
     'nt_index_expr':{
         'nt_cexpr tk_llave_izq nt_expr tk_llave_der'

@@ -1,7 +1,3 @@
-import sys
-sys.setrecursionlimit(5500)
-
-
 grammar={
     'nt_S':['nt_A tk_uno nt_B nt_C nt_S1'],
     'nt_S1':['tk_dos nt_S1', 'e'],
@@ -11,7 +7,6 @@ grammar={
     'nt_C':['tk_cinco nt_D nt_B', 'e'],
     'nt_D':['tk_seis','e']
 }
-
 chocopySyntaxNoRecursion = {
     # program ::= [var def | func def | class def]^∗ stmt^∗
 
@@ -742,6 +737,120 @@ primeroValues = {
 
         # func_def ::= def ID ( [typed_var [, typed_var]^∗]^? ) [-> type ]^? : NEWLINE INDENT func_body DEDENT    
 
+        'nt_func_def':{},
+
+        'nt_argument_aux':{},
+
+        'nt_nvars_aux':{},
+    
+        'nt_return_aux':{},
+
+        # func_body ::= [global_decl | nonlocal_decl | var_def | func_def ]^* stmt^+
+
+        'nt_func_body':{},
+
+        'nt_decl_def_aux':{},
+
+        'nt_nstmt_aux':{},
+
+        # typed_var ::= ID : type
+
+        'nt_typed_var':{},
+
+        # type ::= ID | IDSTRING | '[' type ']'
+
+        'nt_type':{},
+
+        # global decl ::= global ID NEWLINE
+
+        'nt_global_decl':{},
+
+        # nonlocal decl ::= nonlocal ID NEWLINE
+
+        'nt_nonlocal_decl':{},
+
+        # var_def ::= typed_var = literal NEWLINE
+
+        'nt_var_def':{},
+
+        # stmt ::= simple_stmt NEWLINE | if expr : block [elif expr : block ]^* [else : block]^? | while expr : block | for ID in expr : block
+
+        'nt_stmt':{},
+
+        'nt_ncond_aux':{},
+
+        'nt_fcond_aux':{},
+
+        # simple stmt ::= pass | expr | return [expr]^? | [ target = ]^+ expr
+
+        'nt_simple_stmt':{},
+
+        'nt_expr_aux':{},
+
+        'nt_ntargets_aux':{},
+
+        # block ::= NEWLINE INDENT stmt+ DEDENT
+
+        'nt_block':{},
+
+        # literal ::= None | True | False | INTEGER | IDSTRING | STRING
+
+        'nt_literal': {},
+
+        # expr ::= cexpr | not expr | expr [and | or] expr | expr if expr else expr
+
+        'nt_expr':{},
+
+        'nt_expr1':{},
+
+        'nt_expr2':{},
+
+        # cexpr ::= ID | literal | '['  [expr[, expr]^*]^?  ']' | ( expr ) | member_expr | index_expr | member_expr (  [expr [, expr]^*]^?  )
+        #              | ID  (  [expr [, expr]^*]^?  )  | cexpr bin_op cexpr | - cexpr
+
+        'nt_cexpr':{},
+
+        'nt_cexpr2':{},
+
+        'nt_cexpr1':{},
+
+        'nt_cexpr1.1':{},
+
+        # bin_op ::= + | - | * | // | % | == | != | <= | >= | < | > | is
+
+        'nt_bin_op':{},
+
+        # member_expr ::= cexpr . ID
+
+        'nt_member_expr': {},
+
+        # index_expr ::= cexpr '[' expr ']'
+
+        'nt_index_expr':{},
+
+        # target ::= ID
+
+        'nt_target':{}
+}
+siguienteValues = {
+        'nt_program':{},
+
+        'nt_inicio_def':{},
+
+        'nt_inicio_stmt':{},
+
+        # class def ::= class ID ( ID ) : NEWLINE INDENT class body DEDENT
+
+        'nt_class_def':{},
+
+        # class_body ::= pass NEWLINE | [ var def | func def ]^+
+
+        'nt_class_body':{},
+
+        'nt_aux_def':{},
+
+        # func_def ::= def ID ( [typed_var [, typed_var]^∗]^? ) [-> type ]^? : NEWLINE INDENT func_body DEDENT    
+
         'nt_fun_def':{},
 
         'nt_argument_aux':{},
@@ -836,7 +945,7 @@ primeroValues = {
         # target ::= ID
 
         'nt_target':{}
-    }
+}
 primeroOtro = {
     'nt_A': {
     },
@@ -845,7 +954,6 @@ primeroOtro = {
     'nt_C': {
     }
 }
-
 grammar={
     'nt_S':{'nt_A tk_uno nt_B nt_C nt_S1'},
     'nt_S1':{'tk_dos nt_S1', 'e'},
@@ -875,11 +983,13 @@ test2 = {
     },
 }
 recorridos = []
+
+#Obtener primeros
 def PRIMEROS():
     for notTerminal in chocopySyntaxNoRecursion:
         primeroValues[notTerminal] = list(dict.fromkeys(get_PRIMEROS(notTerminal,recorridos, primeroValues)))
         recorridos.append(notTerminal)
-    print(primeroValues)
+    return primeroValues
 
 def get_PRIMEROS(notTerminal, recorridos, primeroValues):
     values = []
@@ -894,7 +1004,7 @@ def get_PRIMEROS(notTerminal, recorridos, primeroValues):
 
 def get_PRIMEROS_values(partsSplit,notTerminal):
         values = []
-        if partsSplit[0][:2] != 'e' or partsSplit[0][:2] != 'nt':
+        if partsSplit[0][:2] != 'e' and partsSplit[0][:2] != 'nt':
             values.append(partsSplit[0])
         if partsSplit[0][:2] == 'nt':
             if partsSplit[0] == notTerminal:
@@ -916,4 +1026,25 @@ def get_PRIMEROS_values(partsSplit,notTerminal):
         if len(partsSplit) == 0:
             values.append('e')
         return values
-PRIMEROS()
+
+
+recorridosSiguientes = []
+
+#Obtener siguientes
+def SIGUIENTES():
+    for notTerminal in chocopySyntaxNoRecursion:
+        siguienteValues[notTerminal] = list(dict.fromkeys(get_PRIMEROS(notTerminal,recorridosSiguientes, primeroValues)))
+        recorridosSiguientes.append(notTerminal)
+    return siguienteValues
+def get_SIGUENTES(notTerminal, recorridosSiguientes, siguienteValues):
+    values = []
+    if notTerminal in recorridosSiguientes:
+        return siguienteValues[notTerminal]
+    else:
+        startPoint = chocopySyntaxNoRecursion[notTerminal]
+        for parts in startPoint:
+            partsSplit = parts.split()
+            values.extend(get_PRIMEROS_values(partsSplit,notTerminal))
+    return values
+
+print(PRIMEROS())

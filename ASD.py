@@ -173,7 +173,16 @@ chocopySyntax = {
         'nt_expr nt_expr1 nt_expr',
         'nt_expr kw_if nt_expr kw_else nt_expr'
     ],
-
+    'nt_expr':[
+        'nt_cexpr nt_expr2',
+        'kw_not nt_expr nt_expr2',
+    ],
+    'nt_expr2':[
+        'nt_expr1 nt_expr nt_expr2',
+        'kw_if nt_expr kw_else nt_expr nt_expr2',
+        'e'
+    ],
+    
     'nt_expr1':[
         'kw_and',
         'kw_or'
@@ -183,17 +192,21 @@ chocopySyntax = {
     #              | ID  (  [expr [, expr]^*]^?  )  | cexpr bin_op cexpr | - cexpr
 
     'nt_cexpr':[
-        'tk_id',
-        'nt_literal',
-        'tk_llave_izq nt_cexpr1 tk_llave_der',
-        'tk_par_izq nt_expr tk_par_der',
-        'nt_member_expr',
-        'nt_index_expr',
-        'nt_member_expr tk_par_izq nt_cexpr1 tk_par_der',
-        'tk_id tk_par_izq nt_cexpr1 tk_par_der',
-        'nt_cexpr nt_bin_op nt_cexpr',
-        'tk_res nt_cexpr'
+        'tk_id nt_cexpr2',
+        'nt_literal nt_cexpr2',
+        'tk_llave_izq nt_cexpr1 tk_llave_der nt_cexpr2',
+        'tk_par_izq nt_expr tk_par_der nt_cexpr2',
+        'nt_member_expr nt_cexpr2',
+        'nt_index_expr nt_cexpr2',
+        'nt_member_expr tk_par_izq nt_cexpr1 tk_par_der nt_cexpr2',
+        'tk_id tk_par_izq nt_cexpr1 tk_par_der nt_cexpr2',
+        'tk_res nt_cexpr nt_cexpr2'
     ],
+    'nt_cexpr2':[
+        'nt_bin_op nt_cexpr nt_cexpr2',
+        'e'
+    ],
+
 
     'nt_cexpr1':[
         'nt_expr nt_cexpr1.1',
@@ -247,7 +260,21 @@ otro = {'nt_A': ['nt_B nt_C', 'kw_bad'],
         'nt_B': ['kw_big nt_C kw_boss','e'],
         'nt_C': ['kw_cat','kw_cow'],
 }
-
+hoffman = {
+    'nt_A': [
+        'nt_B nt_C',
+        'kw_ant nt_A kw_all'
+    ],
+    'nt_B': [
+        'kw_big nt_C',
+        'kw_bus nt_A kw_boss',
+        'e'
+    ],
+    'nt_C': [
+        'kw_cat',
+        'kw_cow'
+    ]
+}
 firsts_list = {}
 for i in list(otro.keys()):
     firsts_list[i] = set()
@@ -289,7 +316,7 @@ def calc_first(grammar):
     return firsts_list
 
 
-first = calc_first(otro)
+first = calc_first(hoffman)
 
 for key,values in first.items():
     print(key, values,sep=' -> ', end='\n')

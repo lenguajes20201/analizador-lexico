@@ -1,4 +1,5 @@
 import chocopylexer as lex
+import test2
 
 lexemas = {
     "tk_sum":"+",
@@ -46,12 +47,108 @@ class Parser:
         self.tokens = self.lexer.make_tokens()
         self.token_index = -1
         self.current_token = None
+        self.prediction = test2.PREDICCION()
 
         self.next_token()
 
     def next_token(self):
         self.token_index +=1
         self.current_token = self.tokens[self.token_index] if self.token_index < len(self.tokens) else None
+
+
+    ## gramatica 
+    def emparejar (self, token_esperado):
+        token = self.current_token
+        if token.type == token_esperado :
+            self.next_token()
+        else:
+            a = []
+            a.append(token)
+            a.append(token_esperado)
+            print (SyntaxError(a))
+
+    def nt_var_def(self) :
+        token1 = self.current_token
+        token=token1.type
+        if (token in self.prediction['nt_var_def']['nt_typed_var tk_asig nt_literal NEWLINE']):
+            self.nt_typed_var()
+            self.emparejar ('tk_asig')
+            self.nt_literal()
+            self.emparejar ('NEWLINE')
+        else:
+            a = []
+            a.append(token1)
+            a.append(list(self.prediction['nt_var_def']['nt_typed_var tk_asig nt_literal NEWLINE']))
+            print (SyntaxError(a))
+
+    def nt_typed_var(self) :
+        token = self.current_token
+        if (token in self.prediction['nt_typed_var']['tk_id tk_dospuntos nt_type']):
+            self.emparejar ('tk_id')
+            self.emparejar ('tk_dospuntos')
+            self.nt_type()
+        else:
+            a = []
+            a.append(token)
+            a.append(list(self.prediction['nt_typed_var']['tk_id tk_dospuntos nt_type']))
+            print (SyntaxError(a))
+
+    def nt_literal(self) :
+        token1 = self.current_token
+        token=token1.type
+        if (token in self.prediction['nt_literal']['kw_None']):
+            self.emparejar ('kw_None')
+        elif (token in self.prediction['nt_literal']['kw_True']):
+            self.emparejar ('kw_True')
+        elif (token in self.prediction['nt_literal']['kw_False']):
+            self.emparejar ('kw_False')
+        elif (token in self.prediction['nt_literal']['tk_entero']):
+            self.emparejar ('tk_entero')
+        elif (token in self.prediction['nt_literal']['tk_id']):
+            self.emparejar ('tk_id')
+        elif (token in self.prediction['nt_literal']['tk_cadena']):
+            self.emparejar ('tk_cadena')
+        else:
+            B = self.prediction['nt_literal']['kw_None'] | self.prediction['nt_literal']['kw_True'] | self.prediction['nt_literal']['kw_False'] | self.prediction['nt_literal']['tk_entero'] | self.prediction['nt_literal']['tk_id'] | self.prediction['nt_literal']['tk_cadena']
+            a = []
+            a.append(token1)
+            a.append(list(B))
+            print (SyntaxError(a))
+
+
+    def nt_type(self) :
+        token1 = self.current_token
+        token=token1.type
+        if (token in self.prediction['nt_type']['tk_id']):
+            self.emparejar ('tk_id')
+        elif (token in self.prediction['nt_type']['tk_idstring']):
+            self.emparejar ('tk_idstring')
+        elif (token in self.prediction['nt_type']['tk_llave_izq nt_type tk_llave_der']):
+            self.emparejar ('tk_llave_izq')
+            self.nt_type()
+            self.emparejar ('tk_llave_der')
+        else:
+            B = self.prediction['nt_type']['tk_id'] | self.prediction['nt_type']['tk_idstring'] | self.prediction['nt_type']['tk_llave_izq nt_type tk_llave_der']
+            a = []
+            a.append(token1)
+            a.append(list(B))
+            print (SyntaxError(a))
+
+
+
+
+
+
+parser = Parser('a:int = 10000')
+parser.nt_var_def()
+if(parser.current_token != None ):
+    print ('Error')
+else: 
+    print('exito')
+
+
+
+
 
 error = SyntaxError([lex.Token('kw_if',lex.Position(8,12,3)),['kw_if','tk_id',"NEWLINE"]])
 print(error)

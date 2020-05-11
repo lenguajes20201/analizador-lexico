@@ -1289,7 +1289,8 @@ def get_primeros_siguientes(grammar, primero, siguiente):
 #print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))
 
 ###### PREDICCION #####
-def PREDICCION(grammar):
+def PREDICCION():
+    grammar = chocopySyntaxNoRecursion
     first = PRIMEROS(grammar,primeroValues)
     follow = SIGUIENTES(grammar,siguienteValues,primeroValues)
 
@@ -1308,5 +1309,3 @@ def PREDICCION(grammar):
     return prediction
 
 #print(PREDICCION(chocopySyntaxNoRecursion))
-for keys, values in PREDICCION(chocopySyntaxNoRecursion).items():
-    print(keys,':',values)

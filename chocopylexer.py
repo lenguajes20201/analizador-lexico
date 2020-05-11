@@ -32,12 +32,12 @@ class Error:
         self.details = details
 
     def __repr__(self):
-        result = f'{self.error_name}: {self.details}, {self.pos.line}, {self.pos.col}'
+        result = f'<{self.pos.line}, {self.pos.col}> {self.error_name}: {self.details}'
         return result
 
 class IllegalCharError(Error):
     def __init__(self, pos, details):
-        super().__init__(pos, '>>> Error Lexico', details)
+        super().__init__(pos, 'Error Lexico', details)
 
 #POSICION
 class Position:
@@ -252,6 +252,7 @@ class Lexer:
             if self.tokens:
                 if isinstance(self.tokens[-1], Error): break
         self.make_indent()
+        self.tokens.append(Token('$',self.pos.copy()))
         return self.tokens
 
     def make_string(self):
@@ -332,7 +333,7 @@ class Lexer:
                 self.tokens.append(Token('DEDENT',start))
         
         return None
-
+'''
 f = open(f"casos_lexer/{0}.txt","r")
 text = f.read()
 lexer = Lexer(text)
@@ -343,3 +344,4 @@ for i in tokens:
     x.write(str(i))
     x.write('\n')
 x.close()
+'''

@@ -986,8 +986,6 @@ test2 = {
         'nt_type':{
     },
 }
-
-
 grammarTest={
     'nt_A':{'nt_B nt_C', 'kw_ant nt_A kw_all'},
     'nt_B':{'kw_big nt_C', 'kw_bus nt_A kw_boss', 'e' },
@@ -1219,8 +1217,6 @@ def get_PRIMEROS_values(partsSplit,grammar,results,notTerminal = ''):
         if len(partsSplit) == 0:
             values.append('e')
         return values
-
-
 recorridosSiguientes = []
 depht = 100
 #Obtener siguientes
@@ -1278,6 +1274,10 @@ def get_SIGUENTES_TEST(A, grammarTest,grammarSiguientes, grammarPrimeros):
                             value.extend(bethaPrimeros)
     grammarSiguientes[A].extend(value)
     return  list(dict.fromkeys(grammarSiguientes[A]))
+def get_primeros_siguientes(grammar, primero, siguiente):
+    primeroValues = PRIMEROS(grammar,primero)
+    siguienteValues = SIGUIENTES(grammar,siguiente,primero)
+    return (primeroValues,siguienteValues)
 
 #primeroValues = PRIMEROS(chocopySyntaxTest2Recursion,chocopySyntaxTest2RecursionPrimeros)
 #print(SIGUIENTES(chocopySyntaxTest2Recursion,chocopySyntaxTest2RecursionSiguientes,chocopySyntaxTest2RecursionPrimeros))
@@ -1285,5 +1285,7 @@ def get_SIGUENTES_TEST(A, grammarTest,grammarSiguientes, grammarPrimeros):
 #primeroValues = PRIMEROS(grammarTest,grammarPrimeros)
 #print(SIGUIENTES(grammarTest,grammarSiguientes,grammarPrimeros))
 
-primeroValues = PRIMEROS(chocopySyntaxNoRecursion,primeroValues)
-print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))
+#primeroValues = PRIMEROS(chocopySyntaxNoRecursion,primeroValues)
+#print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))
+
+print(get_primeros_siguientes(chocopySyntaxNoRecursion,primeroValues,siguienteValues))

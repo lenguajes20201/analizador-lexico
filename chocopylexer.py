@@ -11,16 +11,16 @@ CHARACTERS = [' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '
 
 DIGITS= '0123456789'
 
-KEYWORDS = ['__init__','and',
-'as','assert','async','await',
-'bool','break','class','continue',
-'def','del','elif','else','except',
-'False','finally','for','from','global',
-'if','import','in','input','int','is',
-'lambda','len','None','nonlocal',
-'not','object','or','pass','print',
-'raise','return','self','str','True',
-'try','while','with','yield']
+KEYWORDS = ['kw___init__','kw_and',
+'kw_as','kw_assert','kw_async','kw_await',
+'kw_bool','kw_break','kw_class','kw_continue',
+'kw_def','kw_del','kw_elif','kw_else','kw_except',
+'kw_False','kw_finally','kw_for','kw_from','kw_global',
+'kw_if','kw_import','kw_in','kw_input','kw_int','kw_is',
+'kw_lambda','kw_len','kw_None','kw_nonlocal',
+'kw_not','kw_object','kw_or','kw_pass','kw_print',
+'kw_raise','kw_return','kw_self','kw_str','kw_True',
+'kw_try','kw_while','kw_with','kw_yield']
 
 
 
@@ -308,7 +308,7 @@ class Lexer:
         if id_str in KEYWORDS: 
             return Token(id_str,start)
         else:
-            return Token('id',start,id_str)
+            return Token('tk_id',start,id_str)
     def make_indent(self):
         self.advance()
         indent_count = 0

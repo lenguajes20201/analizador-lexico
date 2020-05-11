@@ -35,7 +35,7 @@ class SyntaxError(lex.Error):
         error_lexeme = lexemas[details[0].type] if details[0].type[:2] != 'kw' else details[0].type[3:]
         expected_lexemes = f'"{lexemas[details[1][0]]}"' if details[1][0][:2] != 'kw' else f'"{details[1][0][3:]}"'
         for lexeme in details[1][1:]:
-            expected_lexemes += f', "{lexemas[lexeme]}"' if lexeme[:2] != 'kw' else f', "lexeme[3:]"'
+            expected_lexemes += f', "{lexemas[lexeme]}"' if lexeme[:2] != 'kw' else f', "{lexeme[3:]}"'
 
         syntax_details = f'Se encontro: "{error_lexeme}"; se esperaba: {expected_lexemes}'
         super().__init__(details[0].position,'Error sintactico',syntax_details)

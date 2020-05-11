@@ -26,7 +26,8 @@ lexemas = {
     "tk_id":"id",
     "NEWLINE":'salto de linea',
     "INDENT":'indentacion',
-    "DEDENT":'indentacion'
+    "DEDENT":'indentacion',
+    "$":"EOF"
 }
 
 
@@ -83,7 +84,7 @@ class Parser:
 
     def nt_typed_var(self) :
         token = self.current_token
-        if (token in self.prediction['nt_typed_var']['tk_id tk_dospuntos nt_type']):
+        if (token.type in self.prediction['nt_typed_var']['tk_id tk_dospuntos nt_type']):
             self.emparejar ('tk_id')
             self.emparejar ('tk_dospuntos')
             self.nt_type()
@@ -137,14 +138,15 @@ class Parser:
 
 
 
+x = open('casos_parser/0.txt','r')
+text = x.read()
+x.close()
 
-
-parser = Parser('a:int = 10000')
+parser = Parser(text)
 print(parser.tokens)
-
 parser.nt_var_def()
 if(parser.current_token != None ):
-    print ('Error')
+    print (parser.current_token)
 else: 
     print('exito')
 

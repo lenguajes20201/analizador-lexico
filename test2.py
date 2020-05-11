@@ -1288,10 +1288,7 @@ def get_primeros_siguientes(grammar, primero, siguiente):
 #primeroValues = PRIMEROS(chocopySyntaxNoRecursion,primeroValues)
 #print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))
 
-    print(get_primeros_siguientes(chocopySyntaxNoRecursion,primeroValues,siguienteValues))
-    value.extend(get_SIGUENTES(B,grammarTest,grammarSiguientes,grammarPrimeros))
-    depht = depht + 1
-    return  list(dict.fromkeys(value))
+print(get_primeros_siguientes(grammarTest,grammarPrimeros,grammarSiguientes))
 
 ###### PREDICCION #####
 def PREDICCION(grammar):

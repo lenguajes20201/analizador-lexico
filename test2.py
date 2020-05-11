@@ -1019,10 +1019,10 @@ def get_PRIMEROS(notTerminal, recorridos, results, grammar):
         startPoint = grammar[notTerminal]
         for parts in startPoint:
             partsSplit = parts.split()
-            values.extend(get_PRIMEROS_values(partsSplit,grammar,notTerminal))
+            values.extend(get_PRIMEROS_values(partsSplit,grammar,results,notTerminal))
     return values
 
-def get_PRIMEROS_values(partsSplit,grammar,notTerminal = ''):
+def get_PRIMEROS_values(partsSplit,grammar,results,notTerminal = ''):
         values = []
         if partsSplit[0][:2] != 'e' and partsSplit[0][:2] != 'nt':
             values.append(partsSplit[0])
@@ -1030,19 +1030,19 @@ def get_PRIMEROS_values(partsSplit,grammar,notTerminal = ''):
             if partsSplit[0] == notTerminal:
                 values.append('tk_recurisvidad_iz')
             else:
-                value = get_PRIMEROS(partsSplit[0],recorridos, primeroValues, grammar)
+                value = get_PRIMEROS(partsSplit[0],recorridos, results, grammar)
                 if 'e' in value:
                     if(len(partsSplit) == 1):
                         values.append('e')
                     else:
-                        values.extend(get_PRIMEROS_values(partsSplit[1:],grammar,notTerminal))
+                        values.extend(get_PRIMEROS_values(partsSplit[1:],grammar,results,notTerminal))
                     value.remove('e')
                 values.extend(value)
         if partsSplit[0][:2] == 'e':
             if len(partsSplit) == 1:
                 values.append('e')
             else:
-                values.extend(get_PRIMEROS_values(partsSplit[1:],grammar,notTerminal))
+                values.extend(get_PRIMEROS_values(partsSplit[1:],grammar,results,notTerminal))
         if len(partsSplit) == 0:
             values.append('e')
         return values
@@ -1051,34 +1051,34 @@ def get_PRIMEROS_values(partsSplit,grammar,notTerminal = ''):
 recorridosSiguientes = []
 depht = 600
 #Obtener siguientes
-def SIGUIENTES(grammarTest,grammarSiguientes):
+def SIGUIENTES(grammarTest,grammarSiguientes, grammarPrimeros):
     first = next(iter(grammarTest))
     grammarSiguientes[first].append('$')
     for A in grammarTest:
-        grammarSiguientes[A].extend(get_SIGUENTES(A,grammarTest,grammarSiguientes))
+        grammarSiguientes[A].extend(get_SIGUENTES(A,grammarTest,grammarSiguientes, grammarPrimeros))
     return grammarSiguientes
-def get_SIGUENTES(A, grammarTest,grammarSiguientes):
+def get_SIGUENTES(A, grammarTest,grammarSiguientes, grammarPrimeros):
     global depht
     value = []
     depht = depht - 1
-    if depht < 0:
-        return
+    
     for B in grammarTest:
+        if B != A:
             for searchValue in grammarTest[B]:
                 if A in searchValue.split():
                     indexA = searchValue.split().index(A)
                     betha = searchValue.split()[indexA+1:]
                     bethaPrimeros = []
                     if(len(betha) > 0):
-                        bethaPrimeros = list(dict.fromkeys(get_PRIMEROS_values(betha,grammarTest)))
+                        bethaPrimeros = list(dict.fromkeys(get_PRIMEROS_values(betha,grammarTest,grammarPrimeros)))
                         if 'e' in bethaPrimeros:
                             bethaTemp = bethaPrimeros.copy()
                             value.extend(bethaTemp)
                         else:
                             value.extend(bethaPrimeros)
                     if 'e' in bethaPrimeros or len(betha) == 0:
-                        value.extend(get_SIGUENTES(B,grammarTest,grammarSiguientes))
+                        value.extend(get_SIGUENTES(B,grammarTest,grammarSiguientes,grammarPrimeros))
     depht = depht + 1
     return  list(dict.fromkeys(value))
-print(PRIMEROS(grammarTest,grammarPrimeros))
-print(SIGUIENTES(grammarTest,grammarSiguientes))
+print(PRIMEROS(chocopySyntaxNoRecursion,primeroValues))
+print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))

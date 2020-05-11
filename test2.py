@@ -1,3 +1,5 @@
+import sys
+sys.setrecursionlimit(600)
 grammar={
     'nt_S':['nt_A tk_uno nt_B nt_C nt_S1'],
     'nt_S1':['tk_dos nt_S1', 'e'],
@@ -1002,6 +1004,177 @@ grammarPrimeros={
     'nt_B':[],
     'nt_C':[]
 }
+
+chocopySyntaxTest2Recursion = {
+    # literal ::= None | True | False | INTEGER | IDSTRING | STRING
+
+    'nt_literal': {
+        'kw_None',
+        'kw_True',
+        'kw_False',
+        'tk_entero',
+        'tk_id',
+        'tk_cadena'
+    },
+
+    # expr ::= cexpr | not expr | expr [and | or] expr | expr if expr else expr
+
+    'nt_expr':{
+        'nt_cexpr nt_expr2',
+        'kw_not nt_expr nt_expr2',
+    },
+    'nt_expr2':{
+        'nt_expr1 nt_expr nt_expr2',
+        'kw_if nt_expr kw_else nt_expr nt_expr2',
+        'e'
+    },
+    'nt_expr1':{
+        'kw_and',
+        'kw_or'
+    },
+
+    # cexpr ::= ID | literal | '['  [expr[, expr]^*]^?  ']' | ( expr ) | member_expr | index_expr | member_expr (  [expr [, expr]^*]^?  )
+    #              | ID  (  [expr [, expr]^*]^?  )  | cexpr bin_op cexpr | - cexpr
+
+    'nt_cexpr':{
+        'tk_id nt_cexpr2 nt_cexpr3',
+        'nt_literal nt_cexpr2 nt_cexpr3',
+        'tk_llave_izq nt_cexpr1 tk_llave_der nt_cexpr2 nt_cexpr3',
+        'tk_par_izq nt_expr tk_par_der nt_cexpr2 nt_cexpr3',
+        'tk_id tk_par_izq nt_cexpr1 tk_par_der nt_cexpr2 nt_cexpr3',
+        'tk_res nt_cexpr nt_cexpr2 nt_cexpr3'
+    },
+    'nt_cexpr3':[
+        'tk_punto tk_id nt_cexpr2 nt_cexpr3',
+        'tk_llave_izq nt_expr tk_llave_der nt_cexpr2 nt_cexpr3',
+        'tk_punto tk_id tk_par_izq nt_cexpr1 tk_par_der nt_cexpr2 nt_cexpr3',
+        'e'
+    ],
+    'nt_cexpr2':[
+        'nt_bin_op nt_cexpr nt_cexpr2',
+        'e'
+    ],
+    'nt_cexpr1':{
+        'nt_expr nt_cexpr1.1',
+        'e'
+    },
+
+    'nt_cexpr1.1':{
+        'tk_coma nt_expr nt_cexpr1.1',
+        'e'
+    },
+
+    # bin_op ::= + | - | * | // | % | == | != | <= | >= | < | > | is
+
+    'nt_bin_op':{
+        'tk_sum',
+        'tk_res',
+        'tk_mul',
+        'tk_div',
+        'tk_mod',
+        'tk_igual',
+        'tk_diferente',
+        'tk_menorig',
+        'tk_mayorig',
+        'tk_menor',
+        'tk_mayor',
+        'kw_is'
+    },
+
+    # member_expr ::= cexpr . ID
+
+    'nt_member_expr': {
+        'nt_cexpr tk_punto tk_id'
+    },
+
+    # index_expr ::= cexpr '[' expr ']'
+
+    'nt_index_expr':{
+        'nt_cexpr tk_llave_izq nt_expr tk_llave_der'
+    },
+
+    # target ::= ID
+
+    'nt_target':{
+        'tk_id',
+        'nt_member_expr',
+        'nt_index_expr'
+    }
+}
+chocopySyntaxTest2RecursionPrimeros = {
+    # literal ::= None | True | False | INTEGER | IDSTRING | STRING
+
+    'nt_literal': [],
+
+    # expr ::= cexpr | not expr | expr [and | or] expr | expr if expr else expr
+
+    'nt_expr':[],
+    'nt_expr2':[],
+    'nt_expr1':[],
+
+    # cexpr ::= ID | literal | '['  [expr[, expr]^*]^?  ']' | ( expr ) | member_expr | index_expr | member_expr (  [expr [, expr]^*]^?  )
+    #              | ID  (  [expr [, expr]^*]^?  )  | cexpr bin_op cexpr | - cexpr
+
+    'nt_cexpr':[],
+    'nt_cexpr3':[],
+    'nt_cexpr2':[],
+    'nt_cexpr1':[],
+
+    'nt_cexpr1.1':[],
+
+    # bin_op ::= + | - | * | // | % | == | != | <= | >= | < | > | is
+
+    'nt_bin_op':[],
+
+    # member_expr ::= cexpr . ID
+
+    'nt_member_expr': [],
+
+    # index_expr ::= cexpr '[' expr ']'
+
+    'nt_index_expr':[],
+
+    # target ::= ID
+
+    'nt_target':[]
+}
+chocopySyntaxTest2RecursionSiguientes = {
+    # literal ::= None | True | False | INTEGER | IDSTRING | STRING
+
+    'nt_literal': [],
+
+    # expr ::= cexpr | not expr | expr [and | or] expr | expr if expr else expr
+
+    'nt_expr':[],
+    'nt_expr2':[],
+    'nt_expr1':[],
+
+    # cexpr ::= ID | literal | '['  [expr[, expr]^*]^?  ']' | ( expr ) | member_expr | index_expr | member_expr (  [expr [, expr]^*]^?  )
+    #              | ID  (  [expr [, expr]^*]^?  )  | cexpr bin_op cexpr | - cexpr
+
+    'nt_cexpr':[],
+    'nt_cexpr3':[],
+    'nt_cexpr2':[],
+    'nt_cexpr1':[],
+
+    'nt_cexpr1.1':[],
+
+    # bin_op ::= + | - | * | // | % | == | != | <= | >= | < | > | is
+
+    'nt_bin_op':[],
+
+    # member_expr ::= cexpr . ID
+
+    'nt_member_expr': [],
+
+    # index_expr ::= cexpr '[' expr ']'
+
+    'nt_index_expr':[],
+
+    # target ::= ID
+
+    'nt_target':[]
+}
 recorridos = []
 
 #Obtener primeros
@@ -1049,21 +1222,20 @@ def get_PRIMEROS_values(partsSplit,grammar,results,notTerminal = ''):
 
 
 recorridosSiguientes = []
-depht = 600
+depht = 100
 #Obtener siguientes
 def SIGUIENTES(grammarTest,grammarSiguientes, grammarPrimeros):
     first = next(iter(grammarTest))
-    grammarSiguientes[first].append('$')
+    grammarSiguientes[first].extend(['$'])
     for A in grammarTest:
-        grammarSiguientes[A].extend(get_SIGUENTES(A,grammarTest,grammarSiguientes, grammarPrimeros))
+        grammarSiguientes[A].extend(get_SIGUENTES_TEST(A,grammarTest,grammarSiguientes, grammarPrimeros))
+    for repeat in grammarSiguientes:
+        grammarSiguientes[repeat] = list(dict.fromkeys(grammarSiguientes[repeat]))
     return grammarSiguientes
 def get_SIGUENTES(A, grammarTest,grammarSiguientes, grammarPrimeros):
     global depht
     value = []
-    depht = depht - 1
-    
     for B in grammarTest:
-        if B != A:
             for searchValue in grammarTest[B]:
                 if A in searchValue.split():
                     indexA = searchValue.split().index(A)
@@ -1073,12 +1245,45 @@ def get_SIGUENTES(A, grammarTest,grammarSiguientes, grammarPrimeros):
                         bethaPrimeros = list(dict.fromkeys(get_PRIMEROS_values(betha,grammarTest,grammarPrimeros)))
                         if 'e' in bethaPrimeros:
                             bethaTemp = bethaPrimeros.copy()
+                            bethaTemp.remove('e')
                             value.extend(bethaTemp)
                         else:
                             value.extend(bethaPrimeros)
                     if 'e' in bethaPrimeros or len(betha) == 0:
-                        value.extend(get_SIGUENTES(B,grammarTest,grammarSiguientes,grammarPrimeros))
-    depht = depht + 1
-    return  list(dict.fromkeys(value))
-print(PRIMEROS(chocopySyntaxNoRecursion,primeroValues))
+                        value.extend(get_SIGUENTES(B,grammarTest,grammarSiguientes,grammarPrimeros))           
+    grammarSiguientes[A].extend(value)
+    return  list(dict.fromkeys(grammarSiguientes[A]))
+def get_SIGUENTES_TEST(A, grammarTest,grammarSiguientes, grammarPrimeros):
+    global depht
+    value = []
+    for B in grammarTest:
+            for searchValue in grammarTest[B]:
+                if A in searchValue.split():
+                    indexA = searchValue.split().index(A)
+                    betha = searchValue.split()[indexA+1:]
+                    bethaPrimeros = []
+                    if (len(betha) == 0):
+                        if A == B:
+                            continue
+                        else:
+                            value.extend(get_SIGUENTES_TEST(B,grammarTest,grammarSiguientes,grammarPrimeros))
+                    else:
+                        bethaPrimeros = list(dict.fromkeys(get_PRIMEROS_values(betha,grammarTest,grammarPrimeros)))
+                        if 'e' in bethaPrimeros:
+                            bethaTemp = bethaPrimeros.copy()
+                            bethaTemp.remove('e')
+                            value.extend(bethaTemp)
+                            value.extend(get_SIGUENTES_TEST(B,grammarTest,grammarSiguientes,grammarPrimeros))
+                        else:
+                            value.extend(bethaPrimeros)
+    grammarSiguientes[A].extend(value)
+    return  list(dict.fromkeys(grammarSiguientes[A]))
+
+#primeroValues = PRIMEROS(chocopySyntaxTest2Recursion,chocopySyntaxTest2RecursionPrimeros)
+#print(SIGUIENTES(chocopySyntaxTest2Recursion,chocopySyntaxTest2RecursionSiguientes,chocopySyntaxTest2RecursionPrimeros))
+
+#primeroValues = PRIMEROS(grammarTest,grammarPrimeros)
+#print(SIGUIENTES(grammarTest,grammarSiguientes,grammarPrimeros))
+
+primeroValues = PRIMEROS(chocopySyntaxNoRecursion,primeroValues)
 print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))

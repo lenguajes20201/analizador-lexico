@@ -1289,3 +1289,29 @@ def get_primeros_siguientes(grammar, primero, siguiente):
 #print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))
 
 print(get_primeros_siguientes(chocopySyntaxNoRecursion,primeroValues,siguienteValues))
+
+                        value.extend(get_SIGUENTES(B,grammarTest,grammarSiguientes,grammarPrimeros))
+    depht = depht + 1
+    return  list(dict.fromkeys(value))
+
+###### PREDICCION #####
+def PREDICCION(grammar):
+    first = PRIMEROS(grammar,primeroValues)
+    follow = SIGUIENTES(grammar,siguienteValues,primeroValues)
+
+    prediction = dict()
+
+    for nonTerminal in grammar.keys():
+        for rule in grammar[nonTerminal]:
+            firstSet = get_PRIMEROS_values(rule.split(),grammar,primeroValues)
+            if 'e' in firstSet:
+                pred = set(firstSet + follow[nonTerminal])
+                prediction[nonTerminal] = {rule:pred}
+            else:
+                prediction[nonTerminal] = {rule:set(firstSet)}
+
+    return prediction
+
+print(PREDICCION(chocopySyntaxNoRecursion))
+'''for keys, values in PREDICCION(chocopySyntaxNoRecursion).items():
+    print(keys,':',values)'''

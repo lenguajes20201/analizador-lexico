@@ -64,7 +64,7 @@ class Parser:
         else:
             a = []
             a.append(token)
-            a.append(token_esperado)
+            a.append([token_esperado])
             print (SyntaxError(a))
 
     def nt_var_def(self) :
@@ -140,15 +140,11 @@ class Parser:
 
 
 parser = Parser('a:int = 10000')
+print(parser.tokens)
+
 parser.nt_var_def()
 if(parser.current_token != None ):
     print ('Error')
 else: 
     print('exito')
 
-
-
-
-
-error = SyntaxError([lex.Token('kw_if',lex.Position(8,12,3)),['kw_if','tk_id',"NEWLINE"]])
-print(error)

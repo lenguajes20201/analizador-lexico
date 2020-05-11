@@ -1,0 +1,23 @@
+a:int = 10000
+b:int = 2
+h:str = ""
+c:int = 0
+s:str = "Hello"
+f:bool = True
+
+x:[int] = None
+y:[object] = None
+
+x = [1, 2]
+y = [None]
+x[0] = 3
+x[1] = y[0] = 4
+print(f)
+c = (c + 2 // b) *  (a - 42)
+f = False
+
+print (c)
+print(x)
+print(s) 
+
+print (c , b) #Error porque solo debe tener un argumento

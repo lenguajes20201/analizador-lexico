@@ -1288,4 +1288,4 @@ def get_primeros_siguientes(grammar, primero, siguiente):
 #primeroValues = PRIMEROS(chocopySyntaxNoRecursion,primeroValues)
 #print(SIGUIENTES(chocopySyntaxNoRecursion,siguienteValues,primeroValues))
 
-print(get_primeros_siguientes(chocopySyntaxNoRecursion,primeroValues,siguienteValues))
+print(get_primeros_siguientes(grammarTest,grammarPrimeros,grammarSiguientes))

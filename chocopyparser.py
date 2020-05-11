@@ -1,5 +1,6 @@
 import chocopylexer as lex
 import test2
+import inspect
 
 lexemas = {
     "tk_sum":"+",
@@ -24,20 +25,22 @@ lexemas = {
     "tk_ejecuta":"->",
     "tk_cadena":"",
     "tk_id":"id",
+    "tk_idstring":"id",
     "NEWLINE":'salto de linea',
     "INDENT":'indentacion',
     "DEDENT":'indentacion',
-    "$":"EOF"
+    "$":"EOF",
+    "tk_entero":"ENTERO"
 }
 
 
 class SyntaxError(lex.Error):
     def __init__(self,details):
+        #print('called from ',inspect.stack()[1].function)
         error_lexeme = lexemas[details[0].type] if details[0].type[:2] != 'kw' else details[0].type[3:]
         expected_lexemes = f'"{lexemas[details[1][0]]}"' if details[1][0][:2] != 'kw' else f'"{details[1][0][3:]}"'
         for lexeme in details[1][1:]:
             expected_lexemes += f', "{lexemas[lexeme]}"' if lexeme[:2] != 'kw' else f', "{lexeme[3:]}"'
-
         syntax_details = f'Se encontro: "{error_lexeme}"; se esperaba: {expected_lexemes}'
         super().__init__(details[0].position,'Error sintactico',syntax_details)
 
@@ -55,18 +58,23 @@ class Parser:
     def next_token(self):
         self.token_index +=1
         self.current_token = self.tokens[self.token_index] if self.token_index < len(self.tokens) else None
+        #print('called from ',inspect.stack()[1].function, self.token_index )
 
 
     ## gramatica 
     def emparejar (self, token_esperado):
+        #print('called from ',inspect.stack()[1].function, self.token_index )
         token = self.current_token
         if token.type == token_esperado :
             self.next_token()
         else:
+            #print('OWO')
             a = []
             a.append(token)
             a.append([token_esperado])
             print (SyntaxError(a))
+            quit()
+            
 
     def nt_var_def(self) :
         token1 = self.current_token
@@ -76,11 +84,13 @@ class Parser:
             self.emparejar ('tk_asig')
             self.nt_literal()
             self.emparejar ('NEWLINE')
+            self.nt_var_def()
         else:
             a = []
             a.append(token1)
             a.append(list(self.prediction['nt_var_def']['nt_typed_var tk_asig nt_literal NEWLINE']))
             print (SyntaxError(a))
+            
 
     def nt_typed_var(self) :
         token = self.current_token
@@ -93,6 +103,7 @@ class Parser:
             a.append(token)
             a.append(list(self.prediction['nt_typed_var']['tk_id tk_dospuntos nt_type']))
             print (SyntaxError(a))
+            
 
     def nt_literal(self) :
         token1 = self.current_token
@@ -115,6 +126,7 @@ class Parser:
             a.append(token1)
             a.append(list(B))
             print (SyntaxError(a))
+            
 
 
     def nt_type(self) :
@@ -135,6 +147,12 @@ class Parser:
             a.append(list(B))
             print (SyntaxError(a))
 
+    def parse(self):
+        parser.nt_var_def()
+
+
+
+
 
 
 
@@ -143,10 +161,6 @@ text = x.read()
 x.close()
 
 parser = Parser(text)
-print(parser.tokens)
-parser.nt_var_def()
-if(parser.current_token != None ):
-    print (parser.current_token)
-else: 
-    print('exito')
+parser.parse()
+
 
